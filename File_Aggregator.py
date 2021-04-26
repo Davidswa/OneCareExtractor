@@ -10,6 +10,7 @@ import os
 import pathlib
 from shutil import copyfile
 import argparse as ap
+from tqdm import tqdm
 
 parser = ap.ArgumentParser(description='Reconstruct OneCare backups.')
 
@@ -28,10 +29,6 @@ RECV_FULL = args.dst
 
 file_list = []
 dir_list =[]
-
-print("Source: %s" % args.src)
-print("Destination: %s" % args.dst)
-
 
 # Walk folders to find all files and paths, store in list
 def create_lists():
@@ -58,7 +55,7 @@ def create_structure(dir_in):
 
 # Move files to new folder structure
 def move_files(file_in):
-    for item in file_in:
+    for item in tqdm(file_in,desc="Copying Files"):
         p = pathlib.Path(item)
         a = RECV_FULL + "\\" + str(pathlib.Path(*p.parts[4:]))
         copyfile(item,a)
@@ -69,7 +66,7 @@ def main():
     create_structure(dir_out)
     print("Structure rebuild completed...")
     move_files(file_out)
-    print("\n\n=============================\nScript completed!\n=============================\n")
+    print("\n=============================\nBackup extraction complete!\n=============================\n")
 
 if __name__ == "__main__":
     main()
